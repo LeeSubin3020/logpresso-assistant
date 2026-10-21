@@ -218,3 +218,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# 지식베이스·색인·질문 기록 (업무 자료 포함 가능, 커밋 금지)
+data/
+# 평가 원본 답변 (사내 자료 이름 포함 가능)
+eval/answers/
+

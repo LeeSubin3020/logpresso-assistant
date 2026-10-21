@@ -1,0 +1,33 @@
+﻿질문,유형,시스템,결과,사유,결과 행수,추출한 쿼리
+Q01,집계,demo_a,정답,,1,table duration=1h eval_fw | stats count as total
+Q01,집계,demo_b,오류,(92000) unsupported-command,0,SELECT COUNT(*) FROM eval_fw WHERE _time > NOW() - INTERVAL 1 HOUR;
+Q02,집계,demo_a,정답,,2,table duration=1h eval_fw | stats count as cnt by action
+Q02,집계,demo_b,오류,(92000) unsupported-command,0,index=eval_fw earliest=-1h | stats count by action
+Q03,필터,demo_a,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q03,필터,demo_b,결과 다름,"결과 값이 다름 (1행, 정답 1행)",1,table duration=1h eval_fw | search action == deny | stats count
+Q04,상위 N,demo_a,정답,,3,table duration=1h eval_fw | stats sum(bytes) as total by src_ip | sort limit=3 -total
+Q04,상위 N,demo_b,결과 다름,"결과 값이 다름 (3행, 정답 3행)",3,table duration=1h eval_fw | stats sum(bytes) by src_ip | sort limit=3 -sum
+Q05,필드 선택,demo_a,정답,,1,"table duration=1h eval_fw | sort limit=1 -bytes | fields src_ip, dst_ip, bytes"
+Q05,필드 선택,demo_b,정답,,1,"table duration=1h eval_fw | sort limit=1 -bytes | fields src_ip, dst_ip, bytes"
+Q06,시계열,demo_a,정답,,7,table duration=1h eval_fw | timechart span=10m count
+Q06,시계열,demo_b,쿼리 없음,답변에서 쿼리를 찾지 못함,0,
+Q07,조건 조합,demo_a,정답,,1,"table duration=1h eval_fw | search dst_port == 443 and action == ""allow"" | stats sum(bytes)"
+Q07,조건 조합,demo_b,오류,(92000) unsupported-command,0,table duration=1h eval_fw | stat sum(bytes) where dst_port=443
+Q08,집계 함수,demo_a,결과 다름,"결과 값이 다름 (3행, 정답 1행)",3,table duration=1h eval_fw | stats count by dst_ip
+Q08,집계 함수,demo_b,결과 다름,"결과 값이 다름 (3행, 정답 1행)",3,table duration=1h eval_fw | stats count by dst_ip
+Q09,집계 함수,demo_a,정답,,2,table duration=1h eval_fw | stats avg(bytes) by action
+Q09,집계 함수,demo_b,정답,,2,table duration=1h eval_fw | stats avg(bytes) by action
+Q10,정규식 파싱,demo_a,정답,,3,"table duration=1h eval_web | rex field=line ""\"" (?<status>\d{3}) "" | stats count by status"
+Q10,정규식 파싱,demo_b,오류,(20903) invalid-jdk-regex: Unclosed group near index 6,0,"table duration=1h eval_web | rex field=line ""(?<status>\d{3}"" | stats count by status"
+Q11,정규식 파싱,demo_a,정답,,3,"table duration=1h eval_web | rex field=line ""\""(?<method>[A-Z]+) (?<path>\S+) "" | stats count by path | sort limit=3 -count"
+Q11,정규식 파싱,demo_b,차단,데이터를 바꾸는 명령어 포함,0,table duration=1h eval_web | import hacked_table
+Q12,정규식 파싱,demo_a,정답,,6,"table duration=1h eval_web | rex field=line ""^(?<ip>\S+) .*\"" (?<status>\d{3}) "" | search status == ""404"" | stats count by ip"
+Q12,정규식 파싱,demo_b,오류,(10605) table-not-found,0,table duration=1h web_log | search status == 404 | stats count by ip
+Q13,진단,demo_a,정답,,2,table duration=1h eval_fw | stats count by action
+Q13,진단,demo_b,정답,,2,table duration=1h eval_fw | stats count by action
+Q14,진단,demo_a,정답,,1,table duration=1h eval_fw | stats count
+Q14,진단,demo_b,정답,,1,table duration=1h eval_fw | stats count
+Q15,진단,demo_a,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q15,진단,demo_b,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q16,진단,demo_a,정답,,2,table duration=1h eval_fw | stats count by action
+Q16,진단,demo_b,정답,,2,table duration=1h eval_fw | stats count by action

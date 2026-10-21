@@ -1,0 +1,263 @@
+﻿질문,유형,시스템,결과,사유,결과 행수,추출한 쿼리
+Q01,집계,gpt,정답,,1,table duration=1h eval_fw | stats count
+Q01,집계,gemini,정답,,1,table duration=1h eval_fw | stats count
+Q01,집계,llm_only,정답,,1,"table duration=1h eval_fw
+| stats count"
+Q01,집계,agent_v1,정답,,1,table duration=1h eval_fw | stats count
+Q01,집계,agent_v2,정답,,1,"table duration=1h eval_fw
+| stats count"
+Q02,집계,gpt,정답,,2,table duration=1h eval_fw | stats count by action
+Q02,집계,gemini,정답,,2,table duration=1h eval_fw | stats count by action
+Q02,집계,llm_only,정답,,2,"table duration=1h eval_fw
+| stats count by action"
+Q02,집계,agent_v1,정답,,2,"table duration=1h eval_fw
+| stats count by action"
+Q02,집계,agent_v2,정답,,2,table duration=1h eval_fw | stats count by action
+Q03,필터,gpt,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q03,필터,gemini,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q03,필터,llm_only,정답,,1,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count"
+Q03,필터,agent_v1,정답,,1,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count"
+Q03,필터,agent_v2,정답,,1,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count"
+Q04,상위 N,gpt,정답,,3,table duration=1h eval_fw | stats sum(bytes) as total_bytes by src_ip | sort limit=3 -total_bytes
+Q04,상위 N,gemini,오류,(21603) invalid-column,0,table duration=1h eval_fw | stats sum(bytes) as total_bytes by src_ip | sort - total_bytes | head 3
+Q04,상위 N,llm_only,정답,,3,"table duration=1h eval_fw
+| stats sum(bytes) as total_bytes by src_ip
+| sort limit=3 -total_bytes"
+Q04,상위 N,agent_v1,정답,,3,table duration=1h eval_fw | stats sum(bytes) as total_bytes by src_ip | sort limit=3 -total_bytes
+Q04,상위 N,agent_v2,정답,,3,table duration=1h eval_fw | stats sum(bytes) as total_bytes by src_ip | sort limit=3 -total_bytes
+Q05,필드 선택,gpt,정답,,1,"table duration=1h eval_fw | sort limit=1 -bytes | fields src_ip, dst_ip, bytes"
+Q05,필드 선택,gemini,오류,(21603) invalid-column,0,"table duration=1h eval_fw | sort - bytes | head 1 | fields src_ip, dst_ip, bytes"
+Q05,필드 선택,llm_only,정답,,1,"table duration=1h eval_fw
+| sort limit=1 -bytes
+| fields src_ip, dst_ip, bytes"
+Q05,필드 선택,agent_v1,정답,,1,"table duration=1h eval_fw
+| sort limit=1 -bytes
+| fields src_ip, dst_ip, bytes"
+Q05,필드 선택,agent_v2,정답,,1,"table duration=1h eval_fw | sort limit=1 -bytes | fields src_ip, dst_ip, bytes"
+Q06,시계열,gpt,정답,,7,table duration=1h eval_fw | timechart span=10m count
+Q06,시계열,gemini,정답,,7,table duration=1h eval_fw | timechart span=10m count
+Q06,시계열,llm_only,정답,,7,"table duration=1h eval_fw
+| timechart span=10m count"
+Q06,시계열,agent_v1,정답,,7,table duration=1h eval_fw | timechart span=10m count
+Q06,시계열,agent_v2,정답,,7,table duration=1h eval_fw | timechart span=10m count
+Q07,조건 조합,gpt,정답,,1,"table duration=1h eval_fw | search dst_port == 443 and action == ""allow"" | stats sum(bytes) as total_bytes"
+Q07,조건 조합,gemini,정답,,1,"table duration=1h eval_fw | search dst_port == 443 and action == ""allow"" | stats sum(bytes) as total_bytes"
+Q07,조건 조합,llm_only,정답,,1,"table duration=1h eval_fw
+| search dst_port == 443 and action == ""allow""
+| stats sum(bytes) as total_bytes"
+Q07,조건 조합,agent_v1,정답,,1,"table duration=1h eval_fw | search dst_port == 443 and action == ""allow"" | stats sum(bytes) as total_bytes"
+Q07,조건 조합,agent_v2,정답,,1,"table duration=1h eval_fw | search dst_port == 443 and action == ""allow"" | stats sum(bytes) as total_bytes"
+Q08,집계 함수,gpt,정답,,1,table duration=1h eval_fw | stats dc(dst_ip) as unique_dst_ip_count
+Q08,집계 함수,gemini,정답,,1,table duration=1h eval_fw | stats dc(dst_ip) as unique_dst_count
+Q08,집계 함수,llm_only,정답,,1,"table duration=1h eval_fw
+| stats dc(dst_ip) as dst_ip_count"
+Q08,집계 함수,agent_v1,정답,,1,"table duration=1h eval_fw
+| stats count by dst_ip
+| stats count as distinct_dst_ip"
+Q08,집계 함수,agent_v2,정답,,1,"table duration=1h eval_fw
+| stats count by dst_ip
+| stats count as distinct_dst_ip"
+Q09,집계 함수,gpt,정답,,2,table duration=1h eval_fw | stats avg(bytes) as avg_bytes by action
+Q09,집계 함수,gemini,정답,,2,table duration=1h eval_fw | stats avg(bytes) as avg_bytes by action
+Q09,집계 함수,llm_only,정답,,2,"table duration=1h eval_fw
+| stats avg(bytes) as avg_bytes by action"
+Q09,집계 함수,agent_v1,정답,,2,table duration=1h eval_fw | stats avg(bytes) as avg_bytes by action
+Q09,집계 함수,agent_v2,정답,,2,table duration=1h eval_fw | stats avg(bytes) as avg_bytes by action
+Q10,정규식 파싱,gpt,정답,,3,"table duration=1h eval_web | rex field=line ""\""[^\""]+\"" (?<status>[0-9]{3})"" | stats count by status"
+Q10,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (1행, 정답 3행)",1,"table duration=1h eval_web | rex field=line ""(?i)\""\\S+ \\S+ HTTP\\/\\S+\"" (?<status>\\d+) \\d+"" | stats count by status"
+Q10,정규식 파싱,llm_only,정답,,3,"table duration=1h eval_web
+| rex field=line ""\"" (?<status>\d{3}) ""
+| stats count by status
+| sort -count"
+Q10,정규식 파싱,agent_v1,결과 다름,"결과 값이 다름 (0행, 정답 3행)",0,"table duration=1h eval_web | eval status = replace(line, ""^\\S+ \\S+ \\S+ \\[[^\\]]*\\] \\x22[^\\x22]*\\x22 (\\d{3}) .*$"", ""$1"") | search status != line | stats count by status | sort -count"
+Q10,정규식 파싱,agent_v2,정답,,3,"table duration=1h eval_web | rex field=line ""HTTP/[0-9.]+. (?<status>[0-9]{3})"" | stats count by status | sort -count"
+Q11,정규식 파싱,gpt,정답,,3,"table duration=1h eval_web | rex field=line ""\""[A-Z]+ (?<path>[^ ]+) HTTP/[^\""]+\"""" | stats count by path | sort limit=3 -count"
+Q11,정규식 파싱,gemini,오류,(21603) invalid-column,0,"table duration=1h eval_web | rex field=line ""(?i)\""\\S+ (?<uri>\\S+) HTTP\\/\\S+\"""" | stats count by uri | sort - count | head 3"
+Q11,정규식 파싱,llm_only,정답,,3,"table duration=1h eval_web
+| rex field=line ""\""(?<method>\w+) (?<path>\S+)""
+| search isnotnull(path)
+| stats count by path
+| sort limit=3 -count"
+Q11,정규식 파싱,agent_v1,결과 다름,"결과 값이 다름 (0행, 정답 3행)",0,"table duration=1h eval_web
+| eval path = replace(line, ""^[^\\[]*\\[[^\\]]*\\] .[A-Z]+ (\\S+) .*$"", ""$1"")
+| search path != line
+| stats count by path
+| sort limit=3 -count"
+Q11,정규식 파싱,agent_v2,정답,,3,"table duration=1h eval_web | rex field=line ""(?<method>[A-Z]+) (?<path>[^ ]+) HTTP/"" | search isnotnull(path) | stats count by path | sort limit=3 -count"
+Q12,정규식 파싱,gpt,정답,,6,"table duration=1h eval_web | rex field=line ""(?<client_ip>[^ ]+).*\""[^\""]+\"" (?<status>[0-9]{3})"" | search status == ""404"" | stats count by client_ip"
+Q12,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (0행, 정답 6행)",0,"table duration=1h eval_web | rex field=line ""^(?<client_ip>\\S+) .* \""\\S+ \\S+ HTTP\\/\\S+\"" (?<status>\\d+)"" | search status == ""404"" | stats count by client_ip"
+Q12,정규식 파싱,llm_only,정답,,6,"table duration=1h eval_web
+| rex field=line ""^(?<client_ip>\S+) \S+ \S+ \[[^\]]+\] \""[^\""]*\"" (?<status>\d{3})""
+| search status == ""404""
+| stats count by client_ip
+| sort -count"
+Q12,정규식 파싱,agent_v1,결과 다름,"결과 값이 다름 (0행, 정답 6행)",0,"table duration=1h eval_web
+| eval client_ip = replace(line, ""^(\\S+) .*$"", ""$1""), status = replace(line, ""^.*?\"" (\\d{3})\\b.*$"", ""$1"")
+| search status == ""404""
+| stats count by client_ip
+| sort -count"
+Q12,정규식 파싱,agent_v2,정답,,6,"table duration=1h eval_web
+| rex field=line ""^(?<client_ip>[^ ]+) .*HTTP/[0-9.]+[^ ]* (?<status>[0-9]{3})""
+| search status == ""404""
+| stats count by client_ip
+| sort -count"
+Q13,진단,gpt,정답,,2,table duration=1h eval_fw | stats count by action
+Q13,진단,gemini,정답,,2,table duration=1h eval_fw | stats count by action
+Q13,진단,llm_only,정답,,2,table duration=1h eval_fw | stats count by action
+Q13,진단,agent_v1,정답,,2,table duration=1h eval_fw | stats count by action
+Q13,진단,agent_v2,정답,,2,table duration=1h eval_fw | stats count by action
+Q14,진단,gpt,정답,,1,table duration=1h eval_fw | stats count
+Q14,진단,gemini,정답,,1,table duration=1h eval_fw | stats count
+Q14,진단,llm_only,정답,,1,table duration=1h eval_fw | stats count
+Q14,진단,agent_v1,정답,,1,table duration=1h eval_fw | stats count
+Q14,진단,agent_v2,정답,,1,table duration=1h eval_fw | stats count
+Q15,진단,gpt,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q15,진단,gemini,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q15,진단,llm_only,정답,,1,"table duration=1h eval_fw | search action == ""deny"" | stats count"
+Q15,진단,agent_v1,정답,,1,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count"
+Q15,진단,agent_v2,정답,,1,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count"
+Q16,진단,gpt,정답,,2,table duration=1h eval_fw | stats count by action
+Q16,진단,gemini,정답,,2,table duration=1h eval_fw | stats count by action
+Q16,진단,llm_only,정답,,2,"table duration=1h eval_fw
+| stats count by action"
+Q16,진단,agent_v1,정답,,2,table duration=1h eval_fw | stats count by action
+Q16,진단,agent_v2,정답,,2,table duration=1h eval_fw | stats count by action
+Q17,정규식 파싱,gpt,정답,,2,"table duration=1h eval_web | rex field=line ""\""(?<method>[A-Z]+) "" | stats count by method"
+Q17,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (1행, 정답 2행)",1,"table duration=1h eval_web | rex field=line ""\""(?<method>\\S+)"" | stats count by method"
+Q17,정규식 파싱,llm_only,정답,,2,"table duration=1h eval_web
+| rex field=line ""\""(?<method>[A-Z]+) ""
+| stats count by method
+| sort -count"
+Q17,정규식 파싱,agent_v1,정답,,2,"table duration=1h eval_web | rex field=line ""\""(?<method>GET|POST) "" | search method == ""GET"" or method == ""POST"" | stats count by method"
+Q17,정규식 파싱,agent_v2,정답,,2,"table duration=1h eval_web | rex field=line ""\""(?<method>GET|POST) "" | search method == ""GET"" or method == ""POST"" | stats count by method"
+Q18,정규식 파싱,gpt,결과 다름,"결과 값이 다름 (4행, 정답 1행)",4,"table duration=1h eval_web | rex field=line ""\""[A-Z]+ (?<path>[^ ]+) HTTP/"" | rex field=line ""\"" (?<status>500) "" | stats count by path"
+Q18,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (0행, 정답 1행)",0,"table duration=1h eval_web | rex field=line ""\""(?<method>\\S+) (?<uri>\\S+) HTTP\\/\\S+\"" (?<status>\\d+)"" | search status == ""500"" | stats count by uri"
+Q18,정규식 파싱,llm_only,정답,,1,"table duration=1h eval_web
+| rex field=line ""^(?<src_ip>\S+) \S+ \S+ \[(?<log_time>[^\]]+)\] \""(?<method>\S+) (?<path>\S+)[^\""]*\"" (?<status>\d{3}) (?<bytes>\S+)""
+| search status == ""500""
+| stats count by path
+| sort -count"
+Q18,정규식 파싱,agent_v1,결과 다름,"결과 값이 다름 (0행, 정답 1행)",0,"table duration=1h eval_web
+| eval status = replace(line, ""^[^\""]*\""[^\""]*\"" (\\d{3}) .*$"", ""$1"")
+| search status == ""500""
+| eval path = replace(line, ""^[^\""]*\""\\S+ (\\S+).*$"", ""$1"")
+| stats count by path
+| sort -count"
+Q18,정규식 파싱,agent_v2,정답,,1,"table duration=1h eval_web
+| rex field=line ""[A-Z]+ (?<path>[^ ]+) HTTP[^ ]* (?<status>[0-9]{3})""
+| search status == ""500""
+| stats count by path
+| sort -count"
+Q19,정규식 파싱,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_web | rex field=line ""\""[A-Z]+ (?<path>[^ ]+) HTTP/"" | search path=""/api/data"" | stats count"
+Q19,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (1행, 정답 1행)",1,"table duration=1h eval_web | rex field=line ""\""(?<method>\\S+) (?<uri>\\S+) HTTP\\/\\S+\"""" | search uri == ""/api/data"" | stats count"
+Q19,정규식 파싱,llm_only,정답,,1,"table duration=1h eval_web
+| rex field=line ""\""(?<method>\S+) (?<path>[^\s?]+)\S* (?<protocol>[^\""]+)\""""
+| search path == ""/api/data""
+| stats count"
+Q19,정규식 파싱,agent_v1,정답,,1,"table duration=1h eval_web | search line == ""* /api/data *"" or line == ""* /api/data?*"" | stats count"
+Q19,정규식 파싱,agent_v2,정답,,1,"table duration=1h eval_web | rex field=line ""(?<method>[A-Z]+) (?<path>/[^ ?]*) HTTP/"" | search path == ""/api/data"" | stats count"
+Q20,정규식 파싱,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_web | rex field=line ""\""(?<method>[A-Z]+) (?<path>[^ ]+) HTTP/"" | search method=""POST"" path=""/login"" | stats count"
+Q20,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (1행, 정답 1행)",1,"table duration=1h eval_web | rex field=line ""\""(?<method>\\S+) (?<uri>\\S+) HTTP\\/\\S+\"""" | search uri == ""/login"" and method == ""POST"" | stats count"
+Q20,정규식 파싱,llm_only,정답,,1,"table duration=1h eval_web
+| rex field=line ""\""(?<method>\S+) (?<path>[^\s?]+)\S* \S+\""""
+| search method == ""POST"" and path == ""/login""
+| stats count"
+Q20,정규식 파싱,agent_v1,정답,,1,"table duration=1h eval_web | search line == ""*\""POST /login *"" or line == ""*\""POST /login?*"" | stats count"
+Q20,정규식 파싱,agent_v2,정답,,1,"table duration=1h eval_web
+| rex field=line ""(?<method>[A-Z]+) (?<path>/[^ ?]*)[^ ]* HTTP/""
+| search method == ""POST"" and path == ""/login""
+| stats count"
+Q21,정규식 파싱,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_web | rex field=line ""\"" (?<status>[0-9]{3}) "" | search status=""404"" OR status=""500"" | stats count"
+Q21,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (1행, 정답 1행)",1,"table duration=1h eval_web | rex field=line ""HTTP\\/\\S+\"" (?<status>\\d+)"" | search status == ""404"" or status == ""500"" | stats count"
+Q21,정규식 파싱,llm_only,정답,,1,"table duration=1h eval_web
+| rex field=line ""\"" (?<status>\d{3}) ""
+| search status == ""404"" or status == ""500""
+| stats count"
+Q21,정규식 파싱,agent_v1,결과 다름,"결과 값이 다름 (1행, 정답 1행)",1,"table duration=1h eval_web | eval status = replace(line, ""^[^\""]*\""[^\""]*\"" (\\d{3}) .*$"", ""$1"") | search status == ""404"" or status == ""500"" | stats count"
+Q21,정규식 파싱,agent_v2,정답,,1,"table duration=1h eval_web | rex field=line ""\"" (?<status>\d{3}) (?<bytes>\d+)"" | search status == ""404"" or status == ""500"" | stats count"
+Q22,정규식 파싱,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_web | rex field=line ""^(?<src_ip>\\S+)"" | rex field=line ""\"" (?<status>[0-9]{3}) "" | search src_ip=""198.51.100.1"" | stats count by status"
+Q22,정규식 파싱,gemini,결과 다름,"결과 값이 다름 (0행, 정답 2행)",0,"table duration=1h eval_web | rex field=line ""^(?<client_ip>\\S+) .* HTTP\\/\\S+\"" (?<status>\\d+)"" | search client_ip == ""198.51.100.1"" | stats count by status"
+Q22,정규식 파싱,llm_only,정답,,2,"table duration=1h eval_web
+| rex field=line ""^(?<client_ip>\S+) \S+ \S+ \[[^\]]+\] \""[^\""]*\"" (?<status>\d{3})""
+| search client_ip == ""198.51.100.1""
+| stats count by status
+| sort status"
+Q22,정규식 파싱,agent_v1,결과 다름,"결과 값이 다름 (0행, 정답 2행)",0,"table duration=1h eval_web
+| eval client_ip = replace(line, ""^(\\S+) .*$"", ""$1"")
+| search client_ip == ""198.51.100.1""
+| eval status = replace(line, ""^\\S+ \\S+ \\S+ \\[[^\\]]*\\] \""[^\""]*\"" (\\d{3}) .*$"", ""$1"")
+| stats count by status
+| sort -count"
+Q22,정규식 파싱,agent_v2,정답,,2,"table duration=1h eval_web
+| rex field=line ""^(?<client_ip>[0-9.]+) [^\""]*\""[^\""]*\"" (?<status>[0-9]{3})""
+| search client_ip == ""198.51.100.1""
+| stats count by status
+| sort -count"
+Q23,필터,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_fw | search action=""deny"" | stats count by src_ip"
+Q23,필터,gemini,정답,,5,"table duration=1h eval_fw | search action == ""deny"" | stats count by src_ip"
+Q23,필터,llm_only,정답,,5,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count by src_ip
+| sort -count"
+Q23,필터,agent_v1,정답,,5,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count by src_ip
+| sort -count"
+Q23,필터,agent_v2,정답,,5,"table duration=1h eval_fw
+| search action == ""deny""
+| stats count by src_ip
+| sort -count"
+Q24,집계 함수,gpt,정답,,1,"table duration=1h eval_fw | stats max(bytes) as max_bytes, min(bytes) as min_bytes"
+Q24,집계 함수,gemini,정답,,1,"table duration=1h eval_fw | stats max(bytes) as max_bytes, min(bytes) as min_bytes"
+Q24,집계 함수,llm_only,정답,,1,"table duration=1h eval_fw
+| stats max(bytes) as max_bytes, min(bytes) as min_bytes"
+Q24,집계 함수,agent_v1,정답,,1,"table duration=1h eval_fw | stats max(bytes) as max_bytes, min(bytes) as min_bytes"
+Q24,집계 함수,agent_v2,정답,,1,"table duration=1h eval_fw | stats max(bytes) as max_bytes, min(bytes) as min_bytes"
+Q25,시계열,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_fw | search action=""deny"" | timechart span=5m count"
+Q25,시계열,gemini,정답,,13,"table duration=1h eval_fw | search action == ""deny"" | timechart span=5m count"
+Q25,시계열,llm_only,정답,,13,"table duration=1h eval_fw
+| search action == ""deny""
+| timechart span=5m count"
+Q25,시계열,agent_v1,정답,,13,"table duration=1h eval_fw | search action == ""deny"" | timechart span=5m count"
+Q25,시계열,agent_v2,정답,,13,"table duration=1h eval_fw | search action == ""deny"" | timechart span=5m count"
+Q26,조건 조합,gpt,오류,(90001) invalid-option,0,table duration=1h eval_fw | search dst_port=22 OR dst_port=3389 | stats count by src_ip
+Q26,조건 조합,gemini,정답,,2,table duration=1h eval_fw | search dst_port == 22 or dst_port == 3389 | stats count by src_ip
+Q26,조건 조합,llm_only,정답,,2,"table duration=1h eval_fw
+| search dst_port == 22 or dst_port == 3389
+| stats count by src_ip
+| sort -count"
+Q26,조건 조합,agent_v1,결과 다름,"결과 값이 다름 (2행, 정답 2행)",2,"table duration=1h eval_fw
+| search dst_port == 22 or dst_port == 3389
+| stats count, sum(bytes) as bytes by src_ip
+| sort -count"
+Q26,조건 조합,agent_v2,정답,,2,"table duration=1h eval_fw
+| search dst_port == 22 or dst_port == 3389
+| stats count by src_ip
+| sort -count"
+Q27,필드 선택,gpt,오류,(90001) invalid-option,0,"table duration=1h eval_fw | search action=""allow"" bytes>3000 | fields src_ip, dst_ip, bytes"
+Q27,필드 선택,gemini,정답,,23,"table duration=1h eval_fw | search action == ""allow"" and bytes > 3000 | fields src_ip, dst_ip, bytes"
+Q27,필드 선택,llm_only,정답,,23,"table duration=1h eval_fw
+| search action == ""allow"" and bytes > 3000
+| fields src_ip, dst_ip, bytes"
+Q27,필드 선택,agent_v1,정답,,23,"table duration=1h eval_fw | search action == ""allow"" and bytes > 3000 | fields src_ip, dst_ip, bytes"
+Q27,필드 선택,agent_v2,정답,,23,"table duration=1h eval_fw
+| search action == ""allow"" and bytes > 3000
+| fields src_ip, dst_ip, bytes"
+Q28,진단,gpt,정답,,2,"table duration=1h eval_web | rex field=line ""\""(?<method>[A-Z]+) "" | stats count by method"
+Q28,진단,gemini,결과 다름,"결과 값이 다름 (1행, 정답 2행)",1,"table duration=1h eval_web | rex field=line ""\""(?<method>\\S+)"" | stats count by method"
+Q28,진단,llm_only,정답,,2,"table duration=1h eval_web
+| rex field=line ""\""(?<method>[A-Z]+) ""
+| search isnotnull(method)
+| stats count by method"
+Q28,진단,agent_v1,정답,,2,"table duration=1h eval_web | rex field=line ""\""(?<method>[A-Z]+) "" | stats count by method"
+Q28,진단,agent_v2,정답,,2,"table duration=1h eval_web | rex field=line ""\""(?<method>[A-Z]+) "" | stats count by method"

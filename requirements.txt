@@ -1,0 +1,5 @@
+streamlit>=1.43
+anthropic>=0.116
+chromadb>=0.5
+sentence-transformers>=3.0
+pypdf>=4.0
